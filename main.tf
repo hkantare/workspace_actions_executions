@@ -30,7 +30,14 @@ resource "ibm_schematics_action" "schematics_action" {
   }
 }
 
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [ibm_schematics_action.schematics_action]
+
+  create_duration = "60s"
+}
+
 resource "ibm_schematics_job" "schematics_job" {
+  depends_on = [time_sleep.wait_30_seconds]
   command_object    = "action"
   command_object_id = ibm_schematics_action.schematics_action.id
   command_name      = "ansible_playbook_run"
